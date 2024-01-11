@@ -6,6 +6,8 @@ color [][] colourGrid = new color[GRIDSIZE][GRIDSIZE];
 
 int optionSet = 1;
 
+int refreshCounter = 60;
+
 void setColours(int option) {
     color colourA = color(0);
     color colourB = color(0);
@@ -32,7 +34,7 @@ void setColours(int option) {
 void setup() {
     size(1000, 800);
     setColours(1);
-    draw();
+    frameRate(60);
 }
 
 
@@ -63,12 +65,16 @@ void draw() {
             endShape();
         }
     }
-    delay(1000);
-    optionSet++;
-    if(optionSet > 2) {
-        optionSet = 1;
+    // delay(1000);
+    refreshCounter--;
+    if(refreshCounter == 0) {
+        refreshCounter = 60;
+        optionSet++;
+        if(optionSet > 2) {
+            optionSet = 1;
+        }
+        setColours(optionSet);
     }
-    setColours(optionSet);
 }
 
 
