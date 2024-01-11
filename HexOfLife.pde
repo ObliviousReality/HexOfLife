@@ -9,16 +9,28 @@ void setup() {
 
 void draw() {
     background(0);
-    fill(255, 255, 0, 255);
-    stroke(0);
+    stroke(255);
     int cellSize = WINDOWSIZE / GRIDSIZE;
-    int sqCount = 0;
     for (int i = 0; i < WINDOWSIZE; i+=cellSize) {
         for (int j = 0; j < WINDOWSIZE; j+=cellSize) {
-            square(i, j, cellSize);
-            sqCount++;
+            // fill(255, 255, 0, 255);
+            // square(i, j, cellSize);
+            fill(0, 255, 255, 255);
+            int half = cellSize / 2;
+            int quarter = cellSize / 4;
+            int x = i + (half);
+            int y = j + (half);
+
+            strokeWeight(2);
+            beginShape();
+            vertex(x, y - half);
+            vertex(x + half, y - quarter);
+            vertex(x + half, y + quarter);
+            vertex(x, y + half);
+            vertex(x - half, y + quarter);
+            vertex(x - half, y - quarter);
+            endShape();
         }
     }
-    print(sqCount);
     noLoop();
 }
