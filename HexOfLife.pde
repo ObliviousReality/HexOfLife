@@ -1,4 +1,4 @@
-final int GRIDSIZE = 20;
+final int GRIDSIZE = 80;
 
 final int WINDOWSIZE = 800;
 
@@ -63,9 +63,7 @@ void setColours() {
     }
 }
 
-void setup() {
-    size(1000, 800);
-    frameRate(60);
+void buildStartingCells() {
     for (int i = 0; i < GRIDSIZE; i++) {
         for (int j = 0; j < GRIDSIZE; j++) {
             if ((int)random(100) % 4 == 0) {
@@ -76,6 +74,12 @@ void setup() {
             }
         }
     }
+}
+
+void setup() {
+    size(825, 650);
+    frameRate(60);
+    buildStartingCells();
 }
 
 void draw() {
@@ -110,7 +114,6 @@ void draw() {
     refreshCounter--;
     if (refreshCounter == 0) {
         refreshCounter = 10;
-        println("CHECK");
         for (int i = 0; i < GRIDSIZE; i++) {
             for (int j = 0; j < GRIDSIZE; j++) {
                 colourGrid[i][j] = checkAlive(i, j);
@@ -125,6 +128,6 @@ void keyPressed() {
         exit();
     }
     if (key == 'r') {
-        setColours();
+        buildStartingCells();
     }
 }
