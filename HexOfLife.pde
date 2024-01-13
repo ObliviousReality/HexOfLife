@@ -1,9 +1,13 @@
-final int GRIDSIZE = 40;
+final int GRIDSIZE = 20;
 
 final int WINDOWSIZE = 800;
 
 boolean[][] colourGrid = new boolean[GRIDSIZE][GRIDSIZE];
 boolean[][] newGrid = new boolean[GRIDSIZE][GRIDSIZE];
+
+int cellSize = WINDOWSIZE / GRIDSIZE;
+int half = cellSize / 2;
+int quarter = cellSize / 4;
 
 int optionSet = 1;
 
@@ -16,6 +20,36 @@ boolean pause = false;
 boolean doLoop = true;
 boolean spacePressed = false;
 
+boolean DEBUGMODE = false;
+
+int[] getCenterCoord(int x, int y) {
+    int[] r = new int[2];
+    r[0] =  x * cellSize + (half * (y % 2 == 0 ? 1 : 2));
+    r[1] = y * cellSize + (half) - (y * quarter) - y * 2;
+    return r;
+}
+
+void lineTo(int[] start, int[] end) {
+    if(!DEBUGMODE) {
+        return;
+    }
+    pushMatrix();
+    stroke(0, 0, 255, 64);
+    strokeWeight(5);
+    line(start[0], start[1], end[0], end[1]);
+    popMatrix();
+}
+
+void textAt(int[] coord, int count) {
+    pushMatrix();
+    fill(255, 0, 0, 255);
+    strokeWeight(5);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text(count, coord[0], coord[1]);
+    popMatrix();
+}
+
 boolean checkAlive(int x, int y) {
     int aliveNeighbours = 0;
     /*
@@ -27,33 +61,62 @@ boolean checkAlive(int x, int y) {
     x + 1 y + 1 x<GRIDSIZE y<GRIDSIZE
 
     */
+    int[] centerPos = getCenterCoord(x, y);
     if (x > 0) {
-        aliveNeighbours += colourGrid[x - 1][y] ? 1 : 0;
+        if (colourGrid[x - 1][y]) {
+            aliveNeighbours++;
+            lineTo(centerPos, getCenterCoord(x - 1, y));
+        }
     }
     if (x < GRIDSIZE - 1) {
-        aliveNeighbours += colourGrid[x + 1][y] ? 1 : 0;
+        if (colourGrid[x + 1][y]) {
+            aliveNeighbours++;
+            lineTo(centerPos, getCenterCoord(x + 1, y));
+        }
     }
     if (y > 0) {
-        aliveNeighbours += colourGrid[x][y - 1] ? 1 : 0;
+        if (colourGrid[x][y - 1]) {
+            aliveNeighbours++;
+            lineTo(centerPos, getCenterCoord(x, y - 1));
+        }
     }
     if (y < GRIDSIZE - 1) {
-        aliveNeighbours += colourGrid[x][y + 1] ? 1 : 0;
+        if (colourGrid[x][y + 1]) {
+            aliveNeighbours++;
+            lineTo(centerPos, getCenterCoord(x, y + 1));
+        }
     }
-    // Needed in Square Mode
-    // if (x > 0 && y > 0) {
-    //     aliveNeighbours += colourGrid[x - 1][y - 1] ? 1 : 0;
-    // }
-    // if (x > 0 && y < GRIDSIZE - 1) {
-    //     aliveNeighbours += colourGrid[x - 1][y + 1] ? 1 : 0;
-    // }
-    if (x < GRIDSIZE - 1 && y > 0) {
-        aliveNeighbours += colourGrid[x + 1][y - 1] ? 1 : 0;
+    if (y % 2 == 0) {
+        if (x > 0 && y > 0) {
+            if (colourGrid[x - 1][y - 1]) {
+                aliveNeighbours++;
+                lineTo(centerPos, getCenterCoord(x - 1, y - 1));
+            }
+        }
+        if (x > 0 && y < GRIDSIZE - 1) {
+            if (colourGrid[x - 1][y + 1]) {
+                aliveNeighbours++;
+                lineTo(centerPos, getCenterCoord(x - 1, y + 1));
+            }
+        }
     }
-    if (x < GRIDSIZE - 1 && y < GRIDSIZE - 1) {
-        aliveNeighbours += colourGrid[x + 1][y + 1] ? 1 : 0;
+    else {
+        if (x < GRIDSIZE - 1 && y > 0) {
+            if (colourGrid[x + 1][y - 1]) {
+                aliveNeighbours++;
+                lineTo(centerPos, getCenterCoord(x + 1, y - 1));
+            }
+        }
+        if (x < GRIDSIZE - 1 && y < GRIDSIZE - 1) {
+            if (colourGrid[x + 1][y + 1]) {
+                aliveNeighbours++;
+                lineTo(centerPos, getCenterCoord(x + 1, y + 1));
+            }
+        }
     }
-
-
+    if(DEBUGMODE) {
+        textAt(centerPos, aliveNeighbours);
+    }
     if (colourGrid[x][y]) {
         if (aliveNeighbours == 2 || aliveNeighbours == 3) {
             return true;
@@ -77,7 +140,7 @@ void setColours() {
 void buildStartingCells() {
     for (int i = 0; i < GRIDSIZE; i++) {
         for (int j = 0; j < GRIDSIZE; j++) {
-            if ((int)random(100) % 10 == 0) {
+            if ((int)random(100) % 6 == 0) {
                 colourGrid[i][j] = true;
             }
             else {
@@ -97,14 +160,12 @@ void setup() {
 void draw() {
     background(0);
     noStroke();
-    int cellSize = WINDOWSIZE / GRIDSIZE;
     for (int i = 0; i < GRIDSIZE; i++) {
         for (int j = 0; j < GRIDSIZE; j++) {
-            int half = cellSize / 2;
-            int quarter = cellSize / 4;
 
-            int x = i * cellSize + (half * (j % 2 == 0 ? 1 : 2));
-            int y = j * cellSize + (half) - (j * quarter) - j * 2;
+            int[] center = getCenterCoord(i, j);
+            int x = center[0];
+            int y = center[1];
             if (colourGrid[i][j]) {
                 fill(ALIVE);
             }
@@ -126,7 +187,12 @@ void draw() {
     if (!pause && doLoop)
         refreshCounter--;
     if (refreshCounter == 0) {
-        refreshCounter = 10;
+        if(DEBUGMODE) {
+            refreshCounter = 1;
+        }
+        else {
+            refreshCounter = 10;
+        }
         for (int i = 0; i < GRIDSIZE; i++) {
             for (int j = 0; j < GRIDSIZE; j++) {
                 newGrid[i][j] = checkAlive(i, j);
@@ -147,7 +213,7 @@ void keyPressed() {
     }
     if (key == ' ' && !spacePressed) {
         pause = !pause;
-        if(!doLoop) {
+        if (!doLoop) {
             spacePressed = true;
             for (int i = 0; i < GRIDSIZE; i++) {
                 for (int j = 0; j < GRIDSIZE; j++) {
@@ -159,6 +225,10 @@ void keyPressed() {
     }
     if (key == 'l') {
         doLoop = !doLoop;
+    }
+
+    if (key == 'D') {
+        DEBUGMODE = !DEBUGMODE;
     }
 }
 
