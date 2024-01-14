@@ -1,6 +1,6 @@
-final int GRIDSIZE = 20;
+final int GRIDSIZE = 100;
 
-final int WINDOWSIZE = 800;
+final int WINDOWSIZE = 1300;
 
 boolean[][] colourGrid = new boolean[GRIDSIZE][GRIDSIZE];
 boolean[][] newGrid = new boolean[GRIDSIZE][GRIDSIZE];
@@ -14,7 +14,7 @@ int optionSet = 1;
 int refreshCounter = 60;
 
 final color ALIVE = color(255, 255, 255);
-final color DEAD = color(0, 0, 0);
+final color DEAD = color(18, 18, 18);
 
 boolean pause = false;
 boolean doLoop = true;
@@ -44,7 +44,7 @@ void textAt(int[] coord, int count) {
     pushMatrix();
     fill(255, 0, 0, 255);
     strokeWeight(5);
-    textSize(30);
+    textSize(10);
     textAlign(CENTER, CENTER);
     text(count, coord[0], coord[1]);
     popMatrix();
@@ -152,13 +152,13 @@ void buildStartingCells() {
 
 
 void setup() {
-    size(1000, 1000);
+    size(1300, 825);
     frameRate(60);
     buildStartingCells();
 }
 
 void draw() {
-    background(0);
+    background(18);
     noStroke();
     for (int i = 0; i < GRIDSIZE; i++) {
         for (int j = 0; j < GRIDSIZE; j++) {
