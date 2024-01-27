@@ -20,7 +20,7 @@ let pause = false;
 let doLoop = true;
 let spacePressed = false;
 
-const DEBUGMODE = false;
+var DEBUGMODE = false;
 
 function make2DArray(cols, rows) {
   let arr = new Array(cols);
@@ -30,7 +30,6 @@ function make2DArray(cols, rows) {
       arr[i][j] = false;
     }
   }
-  console.log(arr);
   return arr;
 }
 
@@ -45,21 +44,21 @@ function lineTo(start, end) {
   if (!DEBUGMODE) {
     return;
   }
-  pushMatrix();
+  push();
   stroke(0, 0, 255, 64);
   strokeWeight(5);
   line(start[0], start[1], end[0], end[1]);
-  popMatrix();
+  pop();
 }
 
 function textAt(coord, count) {
-  pushMatrix();
+  push();
   fill(255, 0, 0, 255);
   strokeWeight(5);
   textSize(10);
   textAlign(CENTER, CENTER);
   text(count, coord[0], coord[1]);
-  popMatrix();
+  pop();
 }
 
 function checkAlive(x, y) {
@@ -242,6 +241,7 @@ function keyPressed() {
   }
 
   if (key == 'D') {
+    console.log("HELLO!");
     DEBUGMODE = !DEBUGMODE;
   }
 }
